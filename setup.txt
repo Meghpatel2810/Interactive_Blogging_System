@@ -17,3 +17,8 @@ Write the password and database name in server.js file .
 Execute : mkdir "photos/profile_photos" .
 
 To run the file : "npm run dev"
+
+
+System Information :
+
+The Login expires in 1 hour
