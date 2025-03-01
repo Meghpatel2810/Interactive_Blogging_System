@@ -1,0 +1,19 @@
+To setup nodejs enviroment and MYSQL database
+
+Download nodejs : https://nodejs.org/en
+
+Package.json file in the Folder : "npm install"
+This will create a node_modules folder and install all required packages.
+
+Download mysql installer : https://dev.mysql.com/downloads/installer/ 
+Install mysql workbench and mysql server
+
+start MYSQL80 server using windows+R => services.msc (Navigate and start MYSQL80).
+
+Execute database.sql file to create database.
+
+Write the password and database name in server.js file .
+
+Execute : mkdir "photos/profile_photos" .
+
+To run the file : "npm run dev"
