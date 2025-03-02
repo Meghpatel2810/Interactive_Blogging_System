@@ -10,8 +10,6 @@ const SECRET_KEY = 'your-secret-key-2810'; // Use environment variable in produc
 const app = express();
 
 
-
-
 app.use(express.json());
 app.use(cors());
 app.use(express.json()); // For JSON bodies
@@ -51,32 +49,68 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Registration endpoint with file upload
+app.get('/categories', async (req, res) => {
+  try {
+    const [categories] = await pool.query('SELECT * FROM categories');
+    res.json(categories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+});
+
+// Modified registration endpoint with transaction
 app.post('/register', upload.single('profilePhoto'), async (req, res) => {
+  const connection = await pool.getConnection();
+  await connection.beginTransaction();
+
   try {
     const { username, email, password } = req.body;
-    const profilePhoto = req.file ? req.file.path : null;
+    const profilePhoto = req.file?.path || null;
 
-    // Validate required fields
+    // Parse categories from comma-separated string to array
+    const categories = req.body.categories 
+      ? req.body.categories.split(',').map(c => {
+          const id = parseInt(c, 10);
+          if (isNaN(id)) throw new Error(`Invalid category ID: ${c}`);
+          return id;
+        })
+      : [];
+
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    const [result] = await pool.execute(
+    // Insert user
+    const [userResult] = await connection.execute(
       'INSERT INTO users (username, email, password_hash, profile_photo) VALUES (?, ?, ?, ?)',
       [username, email, hashedPassword, profilePhoto]
     );
     
+    // Insert categories using batch query
+    if (categories.length > 0) {
+      const categoryValues = categories.map(categoryId => [userResult.insertId, categoryId]);
+      
+      await connection.query(
+        'INSERT INTO user_categories (id, category_id) VALUES ?',
+        [categoryValues]
+      );
+    }
+
+    await connection.commit();
     res.status(201).json({ 
       message: 'User created successfully',
-      userId: result.insertId
+      userId: userResult.insertId
     });
     
   } catch (error) {
-    console.error(error);
+    await connection.rollback();
+    console.error('Registration error:', error);
     res.status(500).json({ error: error.message || 'Registration failed' });
+  } finally {
+    connection.release();
   }
 });
 
@@ -157,6 +191,32 @@ app.get('/profile', authenticateToken, async (req, res) => {
     profilePhoto: req.user.profile_photo || null
   });
 });
+
+
+app.get('/user/:userId/categories', authenticateToken, async (req, res) => {
+  try {
+    // Verify requested user matches token's user
+    if (req.params.userId != req.user.id) {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    const [categories] = await pool.execute(`
+      SELECT c.category_id, c.name 
+      FROM user_categories uc
+      JOIN categories c ON uc.category_id = c.category_id
+      WHERE uc.id = ?
+    `, [req.params.userId]);
+
+    res.json(categories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+});
+
+
+
+
 
 
 // Start server

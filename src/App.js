@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect ,useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Home from './Home';
 import Profile from './Profile';
@@ -11,7 +11,33 @@ function AuthForm() {
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
   const [message, setMessage] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
   const navigate = useNavigate();
+
+  const handleCategoryToggle = (categoryId) => {
+    const numericId = Number(categoryId);
+    setSelectedCategories(prev => 
+      prev.includes(numericId) 
+        ? prev.filter(id => id !== numericId) 
+        : [...prev, numericId]
+    );
+  };
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/categories');
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const switchMode = () => {
     setIsRegistering(!isRegistering);
@@ -40,7 +66,9 @@ function AuthForm() {
         if (profilePhoto) {
           formData.append('profilePhoto', profilePhoto);
         }
-  
+        setSelectedCategories(prev => prev.map(id => Number(id)));
+        formData.append('categories', selectedCategories.join(','));
+
         response = await fetch(`http://localhost:5000/register`, {
           method: 'POST',
           body: formData
@@ -91,6 +119,23 @@ function AuthForm() {
               accept="image/*"
               onChange={handleFileChange}
             />
+            <div className="category-selection">
+          <h3>Select your interests:</h3>
+          <div className="categories-container">
+          {categories.map(category => (
+          <label key={category.category_id} className={`category-tag ${selectedCategories.includes(category.category_id) ? 'selected' : ''}`}>
+            <input
+              type="checkbox"
+              value={category.category_id}
+              checked={selectedCategories.includes(category.category_id)}
+              onChange={(e) => handleCategoryToggle(e.target.value)}
+              hidden
+            />
+            {category.name}
+          </label>
+        ))}
+          </div>
+        </div>
           </>
         )}
         <input

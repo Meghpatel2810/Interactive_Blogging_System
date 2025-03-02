@@ -15,6 +15,7 @@ const Home = () => {
                     </button>
                     <button className="logout-btn" onClick={() => {
                         localStorage.removeItem('token');
+                        console.log("User logged out");
                         navigate('/');
                     }}>Logout</button>
                 </div>
