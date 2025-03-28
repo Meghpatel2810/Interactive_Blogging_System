@@ -10,6 +10,14 @@ const Home = () => {
             <header className="header">
                 <h1>Megh</h1>
                 <div className="profile-section">
+
+                    <button 
+                        className="write-btn"
+                        onClick={() => navigate('/write')}
+                    >
+                        <span>✍️ Write</span>
+                    </button>
+
                     <button className="profile-btn" onClick={() => navigate('/profile')}>
                     <span>Profile</span>
                     </button>

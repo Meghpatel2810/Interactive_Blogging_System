@@ -2,6 +2,7 @@ import React, {useEffect ,useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Home from './Home';
 import Profile from './Profile';
+import WritePost from './WritePost';
 import './App.css';
 
 function AuthForm() {
@@ -195,6 +196,11 @@ function App() {
         <Route path="/profile" element={
           <PrivateRoute>
             <Profile />
+          </PrivateRoute>
+        } />
+        <Route path='/Write' element={
+          <PrivateRoute>
+            <WritePost />
           </PrivateRoute>
         } />
       </Routes>

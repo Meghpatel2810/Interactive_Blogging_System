@@ -1,3 +1,5 @@
+show tables;
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -9,12 +11,27 @@ CREATE TABLE users (
 
 create table post (
 	post_id int auto_increment primary key,
-    id int ,
-    foreign key(id) references users(id) on delete cascade ,
+    user_id int ,
+    foreign key(user_id) references users(id) on delete cascade ,
     title varchar(255) not null,
     content text not null,
     created_at timestamp default current_timestamp
 );
+
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS post;
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+ALTER TABLE post 
+CHANGE COLUMN userid user_id INT NOT NULL;
+
+ALTER TABLE post ADD COLUMN user_id INT NOT NULL;
+
+
+desc post;
+
+drop table post;
 
 create table post_likes (
 	id int not null,
@@ -30,6 +47,11 @@ CREATE TABLE post_photos (
     photo_path VARCHAR(255) NOT NULL,
     FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE
 );
+
+select * from post;
+select * from post_photos;
+
+drop table post_photos;
 
 create table comments (
 	comment_id int auto_increment primary key,
@@ -84,23 +106,4 @@ CREATE TABLE user_categories (
     PRIMARY KEY (id, category_id)
 );
 
--- demo queries
-
-drop table post_likes;
-drop table comments;
-
-drop table post;
-
 show tables;
-
-SET FOREIGN_KEY_CHECKS = 0;
-truncate table users;
-SET FOREIGN_KEY_CHECKS = 1;
-
-
-
-select * from user_categories;
-
-select * from users;
-delete from users where id=3;
-drop table post

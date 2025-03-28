@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
 const multer = require('multer');
+const fs=require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
@@ -12,7 +13,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(express.json()); // For JSON bodies
 app.use(express.urlencoded({ extended: true })); // For URL-encoded bodies
 app.use('/photos/profile_photos', express.static(path.join(__dirname, 'photos/profile_photos')));
 
@@ -215,7 +215,94 @@ app.get('/user/:userId/categories', authenticateToken, async (req, res) => {
 });
 
 
+// BLOGS POSTING AND RETREIVAL
 
+
+app.post('/posts', authenticateToken, async (req, res) => {
+  let connection;
+  try {
+    // Destructure with a default empty array for categories
+    const { title, content, categories = [] } = req.body;
+    
+    // Debug logs to ensure all values are defined
+    console.log("Received post data:", { title, content, categories });
+    console.log("Authenticated user id:", req.user && req.user.id);
+    
+    // Validate required fields
+    if (!req.user || typeof req.user.id === 'undefined' || !title || !content) {
+      return res.status(400).json({ error: "Missing required fields or user not authenticated" });
+    }
+    
+    // Acquire a connection and begin a transaction
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+    
+    // Insert the post (only user_id, title, and content)
+    const [result] = await connection.execute(
+      'INSERT INTO post (user_id, title, content) VALUES (?, ?, ?)',
+      [req.user.id, title, content]
+    );
+    const postId = result.insertId;
+    
+    // Process categories: they might be numbers or objects with properties "category_id" or "id"
+    if (Array.isArray(categories) && categories.length > 0) {
+      const values = categories
+        .map(cat => {
+          let categoryId;
+          if (typeof cat === 'object' && cat !== null) {
+            // Extract from object: try "category_id", then "id"
+            categoryId = cat.category_id || cat.id;
+          } else {
+            // Assume it's already a number
+            categoryId = cat;
+          }
+          return [postId, categoryId];
+        })
+        // Filter out any pairs where the categoryId is undefined
+        .filter(pair => typeof pair[1] !== 'undefined');
+      
+      // Only perform insertion if there's at least one valid category ID
+      if (values.length > 0) {
+        await connection.query(
+          'INSERT INTO post_categories (post_id, category_id) VALUES ?',
+          [values]
+        );
+      }
+    }
+    
+    await connection.commit();
+    res.status(201).json({ message: "Post created successfully", postId });
+  } catch (error) {
+    if (connection) await connection.rollback();
+    console.error("Error creating post:", error);
+    res.status(500).json({ error: error.message || "Failed to create post" });
+  } finally {
+    if (connection) connection.release();
+  }
+});
+
+
+
+
+
+// Get user's posts endpoint
+app.get('/posts', authenticateToken, async (req, res) => {
+  try {
+    const [posts] = await pool.execute(`
+      SELECT p.*, GROUP_CONCAT(pp.photo_path) as photos 
+      FROM post p
+      LEFT JOIN post_photos pp ON p.post_id = pp.post_id
+      WHERE p.id = ?
+      GROUP BY p.post_id
+      ORDER BY p.created_at DESC
+    `, [req.user.id]);
+
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch posts' });
+  }
+});
 
 
 

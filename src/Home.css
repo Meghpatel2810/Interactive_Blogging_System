@@ -23,7 +23,21 @@
   .profile-section {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px; /* Reduced gap for compact layout */
+  }
+
+  .write-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  .write-btn span::before {
+    content: "✍️";
+    margin-right: 5px;
+  }
+  
+  /* Remove write button from sidebar */
+  .sidebar .write-btn {
+    display: none;
   }
   
   /* Profile Button */
@@ -138,3 +152,11 @@
     gap: 10px;
   }
   
+  .profile-btn,
+.logout-btn,
+.write-btn {
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
