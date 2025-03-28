@@ -289,12 +289,15 @@ app.post('/posts', authenticateToken, async (req, res) => {
 app.get('/posts', authenticateToken, async (req, res) => {
   try {
     const [posts] = await pool.execute(`
-      SELECT p.*, GROUP_CONCAT(pp.photo_path) as photos 
-      FROM post p
-      LEFT JOIN post_photos pp ON p.post_id = pp.post_id
-      WHERE p.id = ?
-      GROUP BY p.post_id
-      ORDER BY p.created_at DESC
+      SELECT p.post_id, p.title, p.content, p.created_at, 
+      GROUP_CONCAT(c.name) AS categories
+      FROM post p 
+      LEFT JOIN post_categories pc ON p.post_id = pc.post_id 
+      LEFT JOIN categories c ON pc.category_id = c.category_id 
+      WHERE p.user_id = ? 
+      GROUP BY p.post_id 
+      ORDER BY p.created_at DESC;
+
     `, [req.user.id]);
 
     res.json(posts);
