@@ -308,6 +308,128 @@ app.get('/posts', authenticateToken, async (req, res) => {
 });
 
 
+// INTERACTION WITH THE POSTS
+
+// GET /posts/:post_id - Get full details of a post
+app.get('/posts/:post_id', authenticateToken, async (req, res) => {
+  try {
+    const { post_id } = req.params;
+    // Get post details with author and categories, plus like count.
+    const [posts] = await pool.execute(`
+      SELECT 
+        p.post_id, p.title, p.content, p.created_at,
+        u.username, u.profile_photo,
+        GROUP_CONCAT(DISTINCT c.name) AS categories,
+        (SELECT COUNT(*) FROM post_likes pl WHERE pl.post_id = p.post_id) AS like_count
+      FROM post p
+      JOIN users u ON p.user_id = u.id
+      LEFT JOIN post_categories pc ON p.post_id = pc.post_id
+      LEFT JOIN categories c ON pc.category_id = c.category_id
+      WHERE p.post_id = ?
+      GROUP BY p.post_id, u.username, u.profile_photo
+    `, [post_id]);
+
+    if (posts.length === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Get comments for the post with commenter info
+    const [comments] = await pool.execute(`
+      SELECT com.comment_id, com.content, com.created_at, u.username, u.profile_photo
+      FROM comments com
+      JOIN users u ON com.id = u.id
+      WHERE com.post_id = ?
+      ORDER BY com.created_at ASC
+    `, [post_id]);
+
+    const postDetails = posts[0];
+    postDetails.comments = comments;
+    
+    res.json(postDetails);
+  } catch (error) {
+    console.error('Error fetching post details:', error);
+    res.status(500).json({ error: 'Failed to fetch post details' });
+  }
+});
+
+// POST /posts/:post_id/like - Like a post (only one like per user)
+app.post('/posts/:post_id/like', authenticateToken, async (req, res) => {
+  try {
+    const { post_id } = req.params;
+    const user_id = req.user.id;
+    
+    // Check if the user already liked the post
+    const [existing] = await pool.execute(
+      'SELECT * FROM post_likes WHERE post_id = ? AND id = ?',
+      [post_id, user_id]
+    );
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Already liked' });
+    }
+    
+    await pool.execute(
+      'INSERT INTO post_likes (post_id, id) VALUES (?, ?)',
+      [post_id, user_id]
+    );
+    
+    res.status(201).json({ message: 'Post liked successfully' });
+  } catch (error) {
+    console.error('Error liking post:', error);
+    res.status(500).json({ error: 'Failed to like post' });
+  }
+});
+
+// POST /posts/:post_id/comment - Comment on a post
+app.post('/posts/:post_id/comment', authenticateToken, async (req, res) => {
+  try {
+    const { post_id } = req.params;
+    const { comment } = req.body;
+    const user_id = req.user.id;
+
+    if (!comment) {
+      return res.status(400).json({ error: 'Comment cannot be empty' });
+    }
+
+    const [result] = await pool.execute(
+      'INSERT INTO comments (post_id, id, content) VALUES (?, ?, ?)',
+      [post_id, user_id, comment]
+    );
+
+    res.status(201).json({ message: 'Comment added successfully', comment_id: result.insertId });
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    res.status(500).json({ error: 'Failed to add comment' });
+  }
+});
+
+
+
+// GET /feed - Retrieve all posts for the feed
+app.get('/feed', authenticateToken, async (req, res) => {
+  try {
+    const [posts] = await pool.execute(`
+      SELECT
+        p.post_id,
+        p.title,
+        p.created_at,
+        u.username,
+        u.profile_photo,
+        (SELECT COUNT(*) FROM post_likes pl WHERE pl.post_id = p.post_id) AS like_count,
+        (SELECT COUNT(*) FROM comments com WHERE com.post_id = p.post_id) AS comment_count
+      FROM post p
+      JOIN users u ON p.user_id = u.id
+      ORDER BY p.created_at DESC
+    `);
+    
+    res.json(posts);
+  } catch (error) {
+    console.error('Error fetching feed posts:', error);
+    res.status(500).json({ error: 'Failed to fetch feed posts' });
+  }
+});
+
+
+
 
 // Start server
 const PORT = 5000;

@@ -1,0 +1,198 @@
+/* Post.css */
+
+/* Container for the entire post detail page */
+.post-detail-container {
+  width: 100% !important;
+  height: 100%;
+  margin: 20px 0 !important; /* minimal vertical margin */
+  padding: 20px;
+  background-color: #fff;
+  /* Removed max-width and center margin so it spans the full width */
+  box-shadow: none; 
+  border-radius: 0;
+  text-align: left !important;
+}
+
+/* Post Header: Author & Categories */
+.post-header {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+/* Author Info: photo & name */
+.post-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.author-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.author-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Post Categories */
+.post-categories {
+  margin-top: 5px;
+}
+
+.post-categories strong {
+  font-size: 1rem;
+  margin-right: 8px;
+}
+
+.categories-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.category-tag {
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Post Content */
+.post-content {
+  margin-bottom: 20px;
+}
+
+.post-content h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.post-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* Post Meta */
+.post-meta {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 10px;
+}
+
+/* Post Interactions (Like Button) */
+.post-interactions {
+  margin-bottom: 20px;
+}
+
+.post-interactions button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.post-interactions button:hover {
+  background-color: #0056b3;
+}
+
+/* Comments Section */
+.comments-section {
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+}
+
+.comments-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Each comment card */
+.comment-card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.comment-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.comment-author-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.comment-author-name {
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-right: 8px;
+}
+
+.comment-date {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Make sure the comment text is fully visible, no large left indent */
+.comment-text {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.4;
+  margin-left: 0; 
+  margin-top: 5px;
+}
+
+/* Comment Form */
+.comment-form {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.comment-form button {
+  align-self: flex-end;
+  background-color:#333;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.comment-form button:hover {
+  background-color: #0056b3;
+}

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Home from './Home';
 import Profile from './Profile';
 import WritePost from './WritePost';
+import Post from './post';
 import './App.css';
 
 function AuthForm() {
@@ -201,6 +202,11 @@ function App() {
         <Route path='/Write' element={
           <PrivateRoute>
             <WritePost />
+          </PrivateRoute>
+        } />
+        <Route path='/posts/:post_id' element={
+          <PrivateRoute>
+            <Post />
           </PrivateRoute>
         } />
       </Routes>

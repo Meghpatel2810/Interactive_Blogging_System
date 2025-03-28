@@ -6,7 +6,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f2f5;
+    background-image: url("https://static.vecteezy.com/system/resources/thumbnails/022/446/029/small_2x/white-gradient-abstract-curve-pattern-photo.jpeg");
+    background-size: cover; 
   }
   
   .app-container {

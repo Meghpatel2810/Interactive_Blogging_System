@@ -1,162 +1,202 @@
-/* General Reset */
+/* Reset & Global Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-  
-  /* Header Styling */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #1e1e1e;
-    color: white;
-    padding: 15px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  /* Profile Section in Header */
-  .profile-section {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Reduced gap for compact layout */
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-  .write-btn:hover {
-    background-color: #218838; /* Darker green on hover */
-  }
-  
-  .write-btn span::before {
-    content: "✍️";
-    margin-right: 5px;
-  }
-  
-  /* Remove write button from sidebar */
-  .sidebar .write-btn {
-    display: none;
-  }
-  
-  /* Profile Button */
-  .profile-btn {
-    background-color:darkgreen;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  
-  /* Logout Button */
-  .logout-btn {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .logout-btn:hover {
-    background-color: #e63939;
-  }
-  
-  /* Home Page Layout */
-  .home-container {
-    display: flex;
-    padding: 20px;
-    gap: 20px;
-  }
-  
-  /* Sidebar Styling */
-  .sidebar {
-    width: 200px;
-    background-color: #f4f4f4;
-    padding: 15px;
-    border-radius: 10px;
-  }
-  
-  /* Section Titles */
-  .section-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  /* Sidebar Buttons */
-  .trending-tag, .write-btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .trending-tag:hover {
-    background-color: #e6e6e6;
-  }
-  
-  .write-btn {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .write-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Main Content Area */
-  .main-content {
-    flex: 1;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Blog Cards */
-  .blog-card {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .blog-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-  }
-  
-  .blog-meta {
-    font-size: 0.9rem;
-    color: gray;
-    margin-bottom: 10px;
-  }
-  
-  .interaction-count {
-    font-size: 0.9rem;
-    color: gray;
-    display: flex;
-    gap: 10px;
-  }
-  
-  .profile-btn,
-.logout-btn,
-.write-btn {
-  padding: 8px 12px;
-  border-radius: 5px;
+body {
+  background-color: #fafafa;
+}
+
+/* Wrapper */
+.home-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color:aliceblue;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.user-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.write-btn,
+.profile-btn,
+.logout-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
+  transition: background 0.3s;
+}
+
+.write-btn {
+  background-color: blue;
+  color: #fff;
+}
+.write-btn:hover {
+  background-color: #005660;
+}
+
+.profile-btn {
+  background-color: green;
+  color: #fff;
+}
+.profile-btn:hover {
+  background-color: #006400;
+}
+
+.logout-btn {
+  background-color: #ff4d4d;
+  color: #fff;
+}
+.logout-btn:hover {
+  background-color: #e63939;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+  position: fixed;
+  top: 60px; /* adjust if header height changes */
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color:#ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.top-nav ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  padding: 10px 20px;
+}
+
+.top-nav li {
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+}
+
+.top-nav li:hover {
+  color: #000;
+}
+
+/* Main Container */
+.home-container {
+  margin-top: 120px; /* header (60px) + top-nav (60px) */
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Main Feed */
+.main-feed {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* Right Sidebar */
+.right-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.sidebar-item {
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sidebar-item h4 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.sidebar-item p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Blog Card */
+.blog-card {
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.post-author-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.feed-profile-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.author-name {
+  font-weight: bold;
+}
+
+.post-title {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+}
+
+.interaction-count {
+  font-size: 0.85rem;
+  color: #999;
+  display: flex;
+  gap: 15px;
 }
