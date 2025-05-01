@@ -12,7 +12,10 @@ const app = express();
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://interactive-blogging-system-1.onrender.com',
+  credentials: true,
+}));
 app.use(express.urlencoded({ extended: true })); // For URL-encoded bodies
 app.use('/photos/profile_photos', express.static(path.join(__dirname, 'photos/profile_photos')));
 
